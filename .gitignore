@@ -1,0 +1,41 @@
+# Logs e bancos de dados
+*.log
+*.sqlite
+
+# Diretórios de dependências
+/node_modules
+/bower_components
+/vendor
+
+# Arquivos de configuração sensíveis
+.env
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de build e compilação
+/dist
+/build
+
+# Arquivos temporários
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# IDE e arquivos de editor específicos
+.idea
+*.sublime-project
+*.sublime-workspace
+.vscode/
+
+imagens
+tmp
+fotos
+fotos-eventos
+fotos-noticias
+fotos-slides
+fotos-ads
+
+web_socket.log

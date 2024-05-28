@@ -1,0 +1,10 @@
+{
+    "require": {
+        "slim/slim": "^3.0",
+        "tuupola/slim-jwt-auth": "^3.7",
+        "firebase/php-jwt": "^5.0",
+        "vlucas/phpdotenv": "^5.5",
+        "cboden/ratchet": "^0.4.4",
+        "phpmailer/phpmailer": "*"
+    }
+}
