@@ -56,7 +56,7 @@ $app->post('/login', function ($request, $response, $args) use ($db) {
         ]);
     } else {
         // Autenticação falhou
-        return $response->withStatus(401);
+        return $response->withStatus(401)->withJson(['message' => $loginResult['message']]);
     }
 });
 
@@ -276,9 +276,20 @@ $app->get('/api/usuario/{id}', function ($request, $response, $args) use ($db) {
     return $response->withStatus($editUserResult['status'])->withJson(['message' => $editUserResult['message']]);
 });
 
+$app->get('/api/usuarios', function ($request, $response, $args) use ($db) {
+    $editUserResult = obterUsuarios($db, $args['id']);
+    return $response->withStatus($editUserResult['status'])->withJson(['message' => $editUserResult['message']]);
+});
+
+
 $app->post('/api/novo-usuario', function ($request, $response, $args) use ($db) {
     $data = $request->getParsedBody();
     $createResult = criarUsuario($db, $data);
+    return $response->withStatus($createResult['status'])->withJson(['message' => $createResult['message']]);
+});
+
+$app->delete('/api/excluir-usuario/{id}', function ($request, $response, $args) use ($db) {
+    $createResult = excluirUsuario($db, $args['id']);
     return $response->withStatus($createResult['status'])->withJson(['message' => $createResult['message']]);
 });
 

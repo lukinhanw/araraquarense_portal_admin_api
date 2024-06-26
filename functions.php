@@ -51,7 +51,7 @@ function login($db, $email, $password) {
         return ['token' => $token, 'status' => true];
     } else {
         // Autenticação falhou
-        return ['status' => false];
+        return ['status' => false, "message" => "Usuário ou senha estão incorretos."];
     }
 }
 
@@ -66,7 +66,7 @@ function criarUsuario($db, $data) {
     }
 
     // Verifica se senha e confirmar_senha são iguais.
-    if ($data['senha'] != $data['confirmacaoSenha']) {
+    if ($data['senha'] != $data['senha_confirma']) {
         return ['status' => 400, 'message' => "As senhas digitadas não conferem."];
     }
 
@@ -865,6 +865,19 @@ function obterRedes($db) {
     }
 }
 
+function obterUsuarios($db) {
+
+    $stmt = $db->prepare("SELECT * FROM usuarios");
+    $stmt->execute();
+    $redes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($redes) {
+        return ['status' => 200, 'message' => $redes];
+    } else {
+        return ['status' => 200, 'message' => 'Nenhum usuário encontrado.'];
+    }
+}
+
 function editarRede($db, $data, $id) {
 
     // Verifica se todos os campos necessários estão presentes
@@ -1019,6 +1032,18 @@ function editarUsuario($db, $userId, $data) {
     }
 }
 
+function excluirUsuario($db, $id) {
+
+    $stmt = $db->prepare('DELETE FROM usuarios WHERE id = :id');
+    $stmt->execute([':id' => $id]);
+
+    if ($stmt->rowCount() > 0) {
+        return ['status' => 200, 'message' => 'Usuário excluído com sucesso'];
+    } else {
+        return ['status' => 400, 'message' => 'Falha ao excluir usuário'];
+    }
+}
+
 // Funções publicas
 function obterMenu($db) {
     // Consulta para obter todos os títulos
@@ -1144,14 +1169,14 @@ function obterSlidesPublico($db) {
 
 function obterEventosPublicos($db) {
     // Consulta para obter todos os eventos
-    $stmt = $db->prepare("SELECT * FROM eventos INNER JOIN categorias_eventos ON eventos.categoria_id = categorias_eventos.id ORDER BY data_horario DESC");
+    $stmt = $db->prepare("SELECT eventos.id as evento_id, eventos.titulo, categorias_eventos.nome, eventos.data_horario, eventos.imagem FROM eventos INNER JOIN categorias_eventos ON eventos.categoria_id = categorias_eventos.id ORDER BY data_horario DESC");
     $stmt->execute();
     $eventos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $result = [];
-    foreach ($eventos as $evento) {
+    foreach ($eventos as $evento) { 
         $result[] = [
-            'id' => $evento['id'],
+            'id' => $evento['evento_id'],
             'titulo' => $evento['titulo'],
             'categoria' => $evento['nome'],
             // 'descricao' => $evento['descricao'],
@@ -1328,6 +1353,26 @@ function obterPaginaPublica($db, $id) {
         'id' => $pagina['id'],
         'titulo_pagina' => $pagina['pagina'],
         'descricao' => $pagina['conteudoHTML'],
+        'subtitulo' => $pagina['subtitulo'],
+        'conteudoHTML' => $pagina['descricao']
+    ];
+
+    return $result;
+}
+
+function obterSlidePublico($db, $id) {
+
+    // Consulta para obter a página
+    $stmt = $db->prepare("SELECT slides.id, slides.titulo, slides.descricao
+    FROM slides
+    WHERE slides.id = :id");
+    $stmt->execute([':id' => $id]);
+    $pagina = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $result = [
+        'id' => $pagina['id'],
+        'titulo_pagina' => $pagina['titulo'],
+        'descricao' => $pagina['descricao'],
         'subtitulo' => $pagina['subtitulo'],
         'conteudoHTML' => $pagina['descricao']
     ];

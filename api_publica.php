@@ -75,6 +75,12 @@ $app->get('/busca/{termo}', function ($request, $response, $args) use ($db, $acc
     return $response->withJson($result);
 });
 
+$app->get('/slide/{id}', function ($request, $response, $args) use ($db) {
+    $id = $args['id'];
+    $result = obterSlidePublico($db, $id);
+    return $response->withJson($result);
+});
+
 // Instagram (Noticias)
 
 $app->get('/instagram', function ($request, $response, $args) use ($accessToken) {
